@@ -1,0 +1,1239 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DataFlow — Internet Bundles</title>
+    <script src="https://js.paystack.co/v2/inline.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --teal-50: #e1f5ee;
+        --teal-100: #9fe1cb;
+        --teal-400: #1d9e75;
+        --teal-600: #0f6e56;
+        --teal-800: #085041;
+        --teal-900: #04342c;
+        --amber-50: #faeeda;
+        --amber-100: #fac775;
+        --amber-400: #ba7517;
+        --amber-600: #854f0b;
+        --coral-50: #faece7;
+        --coral-100: #f5c4b3;
+        --coral-400: #d85a30;
+        --coral-600: #993c1d;
+        --purple-50: #eeedfe;
+        --purple-100: #cecbf6;
+        --purple-400: #7f77dd;
+        --purple-600: #534ab7;
+        --purple-800: #3c3489;
+        --gray-50: #f1efe8;
+        --gray-100: #d3d1c7;
+        --gray-400: #888780;
+        --gray-700: #5f5e5a;
+      }
+
+      body {
+        font-family: "DM Sans", sans-serif;
+        background: #0a0f0d;
+        color: #e8f5ef;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* NAV */
+      nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.25rem 5%;
+        border-bottom: 1px solid rgba(29, 158, 117, 0.15);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(10, 15, 13, 0.92);
+        backdrop-filter: blur(12px);
+      }
+      .logo {
+        font-family: "Syne", sans-serif;
+        font-weight: 800;
+        font-size: 1.4rem;
+        color: var(--teal-100);
+        letter-spacing: -0.02em;
+      }
+      .logo span {
+        color: var(--teal-400);
+      }
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+        list-style: none;
+      }
+      .nav-links a {
+        color: #9fe1cb;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 400;
+        transition: color 0.2s;
+      }
+      .nav-links a:hover {
+        color: #fff;
+      }
+      .nav-cta {
+        background: var(--teal-400);
+        color: #fff;
+        padding: 0.55rem 1.4rem;
+        border-radius: 100px;
+        text-decoration: none;
+        font-size: 0.88rem;
+        font-weight: 500;
+        transition:
+          background 0.2s,
+          transform 0.1s;
+      }
+      .nav-cta:hover {
+        background: var(--teal-600);
+        transform: translateY(-1px);
+      }
+
+      /* HERO */
+      .hero {
+        text-align: center;
+        padding: 6rem 5% 4rem;
+        position: relative;
+        overflow: hidden;
+      }
+      .hero::before {
+        content: "";
+        position: absolute;
+        top: -20%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 700px;
+        height: 700px;
+        background: radial-gradient(
+          circle,
+          rgba(29, 158, 117, 0.12) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+      .hero-badge {
+        display: inline-block;
+        background: rgba(29, 158, 117, 0.15);
+        color: var(--teal-100);
+        border: 1px solid rgba(29, 158, 117, 0.3);
+        padding: 0.35rem 1rem;
+        border-radius: 100px;
+        font-size: 0.82rem;
+        font-weight: 500;
+        letter-spacing: 0.03em;
+        margin-bottom: 1.5rem;
+      }
+      .hero h1 {
+        font-family: "Syne", sans-serif;
+        font-weight: 800;
+        font-size: clamp(2.4rem, 6vw, 4.2rem);
+        line-height: 1.08;
+        letter-spacing: -0.03em;
+        color: #fff;
+        max-width: 800px;
+        margin: 0 auto 1.25rem;
+      }
+      .hero h1 em {
+        font-style: normal;
+        color: var(--teal-400);
+      }
+      .hero p {
+        color: #9fe1cb;
+        font-size: 1.05rem;
+        font-weight: 300;
+        max-width: 520px;
+        margin: 0 auto 2.5rem;
+        line-height: 1.65;
+      }
+      .hero-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .btn-primary {
+        background: var(--teal-400);
+        color: #fff;
+        padding: 0.8rem 2rem;
+        border-radius: 100px;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.95rem;
+        transition: all 0.2s;
+        border: none;
+        cursor: pointer;
+        display: inline-block;
+      }
+      .btn-primary:hover {
+        background: var(--teal-600);
+        transform: translateY(-2px);
+      }
+      .btn-outline {
+        background: transparent;
+        color: var(--teal-100);
+        padding: 0.8rem 2rem;
+        border-radius: 100px;
+        text-decoration: none;
+        font-weight: 400;
+        font-size: 0.95rem;
+        transition: all 0.2s;
+        border: 1px solid rgba(159, 225, 203, 0.3);
+        cursor: pointer;
+        display: inline-block;
+      }
+      .btn-outline:hover {
+        border-color: var(--teal-100);
+        background: rgba(159, 225, 203, 0.06);
+      }
+
+      /* STATS */
+      .stats {
+        display: flex;
+        justify-content: center;
+        gap: 0;
+        margin: 4rem auto;
+        max-width: 800px;
+        border: 1px solid rgba(29, 158, 117, 0.2);
+        border-radius: 16px;
+        overflow: hidden;
+      }
+      .stat-item {
+        flex: 1;
+        padding: 1.75rem 1.5rem;
+        text-align: center;
+        border-right: 1px solid rgba(29, 158, 117, 0.15);
+      }
+      .stat-item:last-child {
+        border-right: none;
+      }
+      .stat-num {
+        font-family: "Syne", sans-serif;
+        font-weight: 800;
+        font-size: 2rem;
+        color: var(--teal-100);
+        display: block;
+      }
+      .stat-label {
+        font-size: 0.82rem;
+        color: var(--gray-400);
+        margin-top: 0.25rem;
+      }
+
+      /* SECTION */
+      section {
+        padding: 5rem 5%;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .section-label {
+        font-size: 0.78rem;
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        color: var(--teal-400);
+        text-transform: uppercase;
+        margin-bottom: 0.6rem;
+      }
+      .section-title {
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
+        font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+        color: #fff;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.75rem;
+      }
+      .section-sub {
+        color: #9fe1cb;
+        font-weight: 300;
+        max-width: 480px;
+        line-height: 1.65;
+      }
+
+      /* TOGGLE */
+      .billing-toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 2.5rem;
+        flex-wrap: wrap;
+      }
+      .toggle-label {
+        font-size: 0.88rem;
+        color: #9fe1cb;
+      }
+      .save-badge {
+        background: rgba(186, 117, 23, 0.18);
+        color: var(--amber-100);
+        border: 1px solid rgba(186, 117, 23, 0.3);
+        padding: 0.2rem 0.7rem;
+        border-radius: 100px;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+      .toggle-track {
+        width: 48px;
+        height: 26px;
+        border-radius: 100px;
+        background: rgba(29, 158, 117, 0.25);
+        border: 1px solid rgba(29, 158, 117, 0.4);
+        position: relative;
+        cursor: pointer;
+        transition: background 0.2s;
+        display: flex;
+        align-items: center;
+      }
+      .toggle-track.on {
+        background: var(--teal-400);
+      }
+      .toggle-thumb {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #fff;
+        position: absolute;
+        left: 3px;
+        transition: left 0.2s;
+      }
+      .toggle-track.on .toggle-thumb {
+        left: 25px;
+      }
+
+      /* PLANS */
+      .plans-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1.25rem;
+        margin-top: 1rem;
+      }
+      .plan-card {
+        background: #0f1a15;
+        border: 1px solid rgba(29, 158, 117, 0.18);
+        border-radius: 20px;
+        padding: 2rem;
+        position: relative;
+        transition:
+          border-color 0.25s,
+          transform 0.25s;
+        display: flex;
+        flex-direction: column;
+      }
+      .plan-card:hover {
+        border-color: rgba(29, 158, 117, 0.45);
+        transform: translateY(-4px);
+      }
+      .plan-card.featured {
+        background: #0d1f18;
+        border: 1.5px solid var(--teal-400);
+      }
+      .plan-card.featured::before {
+        content: "Most Popular";
+        position: absolute;
+        top: -14px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--teal-400);
+        color: #fff;
+        font-size: 0.75rem;
+        font-weight: 500;
+        padding: 0.25rem 0.9rem;
+        border-radius: 100px;
+        white-space: nowrap;
+      }
+      .plan-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.2rem;
+        font-size: 1.3rem;
+      }
+      .plan-name {
+        font-family: "Syne", sans-serif;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #fff;
+      }
+      .plan-tagline {
+        font-size: 0.84rem;
+        color: var(--gray-400);
+        margin-top: 0.2rem;
+        margin-bottom: 1.5rem;
+      }
+      .plan-price {
+        font-family: "Syne", sans-serif;
+        font-weight: 800;
+        font-size: 2.6rem;
+        color: #fff;
+        letter-spacing: -0.03em;
+        display: flex;
+        align-items: baseline;
+        gap: 4px;
+      }
+      .plan-price .currency {
+        font-size: 1.2rem;
+        font-weight: 500;
+        color: var(--teal-400);
+      }
+      .plan-price .period {
+        font-size: 0.9rem;
+        font-weight: 400;
+        color: var(--gray-400);
+      }
+      .plan-data {
+        margin: 1rem 0 1.5rem;
+        padding: 0.75rem 1rem;
+        border-radius: 10px;
+        background: rgba(29, 158, 117, 0.08);
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+      .plan-data strong {
+        font-family: "Syne", sans-serif;
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: var(--teal-100);
+      }
+      .plan-data span {
+        font-size: 0.82rem;
+        color: #9fe1cb;
+        line-height: 1.3;
+      }
+      .plan-features {
+        list-style: none;
+        margin-bottom: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.65rem;
+      }
+      .plan-features li {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-size: 0.88rem;
+        color: #c8e8d8;
+      }
+      .plan-features li::before {
+        content: "✓";
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: rgba(29, 158, 117, 0.2);
+        color: var(--teal-400);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        font-weight: 700;
+        flex-shrink: 0;
+        line-height: 1;
+      }
+      .plan-features li.muted {
+        color: var(--gray-400);
+      }
+      .plan-features li.muted::before {
+        background: rgba(136, 135, 128, 0.12);
+        color: var(--gray-400);
+        content: "—";
+        font-size: 0.75rem;
+      }
+      .plan-btn {
+        margin-top: auto;
+        width: 100%;
+        padding: 0.8rem;
+        border-radius: 100px;
+        border: none;
+        cursor: pointer;
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.92rem;
+        font-weight: 500;
+        transition: all 0.2s;
+      }
+      .plan-btn.outline {
+        background: transparent;
+        color: var(--teal-100);
+        border: 1px solid rgba(159, 225, 203, 0.3);
+      }
+      .plan-btn.outline:hover {
+        border-color: var(--teal-100);
+        background: rgba(159, 225, 203, 0.06);
+      }
+      .plan-btn.solid {
+        background: var(--teal-400);
+        color: #fff;
+      }
+      .plan-btn.solid:hover {
+        background: var(--teal-600);
+        transform: translateY(-1px);
+      }
+
+      /* USAGE GUIDE */
+      .usage-section {
+        border-top: 1px solid rgba(29, 158, 117, 0.12);
+      }
+      .usage-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 2.5rem;
+      }
+      .usage-card {
+        padding: 1.5rem;
+        border-radius: 14px;
+        background: #0f1a15;
+        border: 1px solid rgba(29, 158, 117, 0.15);
+      }
+      .usage-icon {
+        font-size: 1.6rem;
+        margin-bottom: 0.75rem;
+      }
+      .usage-title {
+        font-family: "Syne", sans-serif;
+        font-weight: 600;
+        font-size: 1rem;
+        color: #fff;
+        margin-bottom: 0.3rem;
+      }
+      .usage-mb {
+        font-size: 0.8rem;
+        color: var(--teal-400);
+        margin-bottom: 0.4rem;
+        font-weight: 500;
+      }
+      .usage-desc {
+        font-size: 0.82rem;
+        color: var(--gray-400);
+        line-height: 1.5;
+      }
+
+      /* FAQ */
+      .faq-list {
+        margin-top: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      .faq-item {
+        border: 1px solid rgba(29, 158, 117, 0.15);
+        border-radius: 12px;
+        overflow: hidden;
+        background: #0f1a15;
+      }
+      .faq-q {
+        padding: 1.1rem 1.25rem;
+        font-weight: 500;
+        font-size: 0.95rem;
+        color: #e8f5ef;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        user-select: none;
+      }
+      .faq-q::after {
+        content: "+";
+        font-size: 1.2rem;
+        color: var(--teal-400);
+        font-weight: 300;
+      }
+      .faq-item.open .faq-q::after {
+        content: "−";
+      }
+      .faq-a {
+        max-height: 0;
+        overflow: hidden;
+        transition:
+          max-height 0.3s ease,
+          padding 0.3s;
+        font-size: 0.88rem;
+        color: #9fe1cb;
+        line-height: 1.7;
+        padding: 0 1.25rem;
+      }
+      .faq-item.open .faq-a {
+        max-height: 200px;
+        padding: 0 1.25rem 1.1rem;
+      }
+
+      /* FOOTER */
+      footer {
+        border-top: 1px solid rgba(29, 158, 117, 0.12);
+        padding: 3rem 5%;
+        text-align: center;
+        color: var(--gray-400);
+        font-size: 0.84rem;
+      }
+      footer a {
+        color: var(--teal-400);
+        text-decoration: none;
+      }
+      .footer-brand {
+        font-family: "Syne", sans-serif;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--teal-100);
+        margin-bottom: 0.5rem;
+      }
+
+      /* RESPONSIVE */
+      /* MODAL */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 999;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(6px);
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+      }
+      .modal-overlay.open {
+        display: flex;
+      }
+      .modal-box {
+        background: #0f1a15;
+        border: 1px solid rgba(29, 158, 117, 0.3);
+        border-radius: 24px;
+        padding: 2.25rem 2rem;
+        width: 100%;
+        max-width: 420px;
+        position: relative;
+        animation: fadeUp 0.25s ease;
+      }
+      .modal-close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: rgba(255, 255, 255, 0.06);
+        border: none;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        color: #9fe1cb;
+        cursor: pointer;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+      }
+      .modal-close:hover {
+        background: rgba(255, 255, 255, 0.12);
+      }
+      .modal-icon {
+        font-size: 2.2rem;
+        margin-bottom: 0.75rem;
+      }
+      .modal-title {
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
+        font-size: 1.3rem;
+        color: #fff;
+        margin-bottom: 1.1rem;
+      }
+      .modal-plan-summary {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(29, 158, 117, 0.08);
+        border: 1px solid rgba(29, 158, 117, 0.2);
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1.5rem;
+      }
+      .modal-plan-badge {
+        font-size: 0.88rem;
+        color: var(--teal-100);
+        font-weight: 500;
+      }
+      .modal-plan-price {
+        font-family: "Syne", sans-serif;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--teal-400);
+      }
+      .modal-label {
+        font-size: 0.82rem;
+        color: var(--gray-400);
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+      }
+      .modal-input {
+        width: 100%;
+        padding: 0.85rem 1rem;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(29, 158, 117, 0.25);
+        color: #fff;
+        font-family: "DM Sans", sans-serif;
+        font-size: 1.05rem;
+        outline: none;
+        transition: border-color 0.2s;
+        letter-spacing: 0.05em;
+      }
+      .modal-input:focus {
+        border-color: var(--teal-400);
+      }
+      .modal-input::placeholder {
+        color: var(--gray-400);
+        letter-spacing: 0;
+      }
+      .modal-hint {
+        font-size: 0.78rem;
+        color: var(--gray-400);
+        margin-top: 0.4rem;
+        margin-bottom: 0.5rem;
+      }
+      .modal-error {
+        font-size: 0.82rem;
+        color: #f09595;
+        min-height: 1.1rem;
+        margin-bottom: 0.5rem;
+      }
+      .modal-pay-btn {
+        width: 100%;
+        padding: 0.9rem;
+        border-radius: 100px;
+        border: none;
+        background: var(--teal-400);
+        color: #fff;
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.95rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition:
+          background 0.2s,
+          transform 0.1s;
+        margin-top: 0.5rem;
+      }
+      .modal-pay-btn:hover {
+        background: var(--teal-600);
+        transform: translateY(-1px);
+      }
+      .modal-methods {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 1rem;
+        flex-wrap: wrap;
+      }
+      .modal-methods span {
+        font-size: 0.75rem;
+        color: var(--gray-400);
+        background: rgba(255, 255, 255, 0.04);
+        padding: 0.3rem 0.75rem;
+        border-radius: 100px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      @media (max-width: 640px) {
+        .nav-links {
+          display: none;
+        }
+      }
+
+      /* ANIMATIONS */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(24px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .hero > * {
+        animation: fadeUp 0.6s ease both;
+      }
+      .hero-badge {
+        animation-delay: 0.05s;
+      }
+      .hero h1 {
+        animation-delay: 0.12s;
+      }
+      .hero p {
+        animation-delay: 0.2s;
+      }
+      .hero-actions {
+        animation-delay: 0.28s;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="logo">Data<span>Flow</span></div>
+      <ul class="nav-links">
+        <li><a href="#plans">Plans</a></li>
+        <li><a href="#usage">Data Guide</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+      <a href="#plans" class="nav-cta">Get Started</a>
+    </nav>
+
+    <div class="hero">
+      <div class="hero-badge">⚡ Ghana's Fastest Data Bundles</div>
+      <h1>Stay Connected,<br /><em>Pay Less.</em></h1>
+      <p>
+        Unlimited internet that <em>never expires.</em> Stream, browse, and work
+        as much as you want — no caps, no surprises.
+      </p>
+      <div class="hero-actions">
+        <a href="#plans" class="btn-primary">View All Plans</a>
+        <a href="#usage" class="btn-outline">See What You Can Do</a>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat-item">
+        <span class="stat-num">50K+</span>
+        <span class="stat-label">Happy Customers</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">99.9%</span>
+        <span class="stat-label">Uptime Guarantee</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">24/7</span>
+        <span class="stat-label">Customer Support</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">GHS 5</span>
+        <span class="stat-label">Starts From</span>
+      </div>
+    </div>
+
+    <section id="plans">
+      <div class="section-label">Data Bundles</div>
+      <div class="section-title">Choose Your Bundle</div>
+      <p class="section-sub" style="margin-bottom: 2.5rem">
+        Simple pricing, no surprises. Pick a bundle and pay instantly via Mobile
+        Money.
+      </p>
+
+      <div class="plans-grid" id="plansGrid">
+        <!-- Injected by JS -->
+      </div>
+    </section>
+
+    <section id="usage" class="usage-section">
+      <div class="section-label">Data Guide</div>
+      <div class="section-title">How Far Will Your Data Go?</div>
+      <p class="section-sub">
+        Every megabyte counts. Here's what you can do with different bundles.
+      </p>
+      <div class="usage-grid">
+        <div class="usage-card">
+          <div class="usage-icon">💬</div>
+          <div class="usage-title">WhatsApp</div>
+          <div class="usage-mb">~0.03 MB/msg</div>
+          <div class="usage-desc">
+            1GB = ~33,000 text messages or ~1,000 voice messages
+          </div>
+        </div>
+        <div class="usage-card">
+          <div class="usage-icon">📺</div>
+          <div class="usage-title">YouTube</div>
+          <div class="usage-mb">~100–400 MB/hr</div>
+          <div class="usage-desc">5GB = 5–10 hours of SD video streaming</div>
+        </div>
+        <div class="usage-card">
+          <div class="usage-icon">🎵</div>
+          <div class="usage-title">Music</div>
+          <div class="usage-mb">~40–150 MB/hr</div>
+          <div class="usage-desc">
+            1GB = 7–25 hours of continuous music streaming
+          </div>
+        </div>
+        <div class="usage-card">
+          <div class="usage-icon">🌐</div>
+          <div class="usage-title">Browsing</div>
+          <div class="usage-mb">~5–20 MB/page</div>
+          <div class="usage-desc">500MB = light browsing for an entire day</div>
+        </div>
+        <div class="usage-card">
+          <div class="usage-icon">📹</div>
+          <div class="usage-title">Video Calls</div>
+          <div class="usage-mb">~200–300 MB/hr</div>
+          <div class="usage-desc">
+            2GB = ~7–10 hours of calls on Zoom or Google Meet
+          </div>
+        </div>
+        <div class="usage-card">
+          <div class="usage-icon">📱</div>
+          <div class="usage-title">Social Media</div>
+          <div class="usage-mb">~90 MB/hr</div>
+          <div class="usage-desc">
+            1GB = ~11 hours of scrolling Facebook, TikTok, Instagram
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq">
+      <div class="section-label">FAQ</div>
+      <div class="section-title">Frequently Asked Questions</div>
+      <div class="faq-list">
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            How do I activate a bundle?
+          </div>
+          <div class="faq-a">
+            After purchase, your bundle activates instantly on your registered
+            number. You'll receive an SMS confirmation within seconds.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            Can I buy a bundle for someone else?
+          </div>
+          <div class="faq-a">
+            Yes! During checkout, simply enter the recipient's phone number
+            instead of yours. Gift data to family and friends instantly.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            What happens when my data runs out?
+          </div>
+          <div class="faq-a">
+            You'll receive an SMS alert when you're at 20% remaining. Once data
+            is exhausted, you can top up instantly — your number stays active.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            Do bundles roll over to the next period?
+          </div>
+          <div class="faq-a">
+            Monthly bundles carry up to 20% unused data to the next month if you
+            renew before expiry. Daily and weekly bundles do not roll over.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            What payment methods are accepted?
+          </div>
+          <div class="faq-a">
+            We accept Mobile Money (MTN MoMo, Vodafone Cash, AirtelTigo Money),
+            bank cards (Visa/Mastercard), and cash at any of our agent
+            locations.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-brand">DataFlow</div>
+      <p>
+        © 2025 DataFlow Ghana. All rights reserved. &nbsp;·&nbsp;
+        <a href="#">Privacy Policy</a> &nbsp;·&nbsp;
+        <a href="#">Terms of Service</a>
+      </p>
+      <p style="margin-top: 0.5rem">
+        📞 Support: 0800-DATAFLOW &nbsp;·&nbsp; 📧
+        <a href="#">help@dataflow.gh</a>
+      </p>
+    </footer>
+
+    <script>
+      const plans = [
+        {
+          name: "Starter",
+          tagline: "Perfect for daily browsing",
+          icon: "📶",
+          iconBg: "rgba(29,158,117,0.1)",
+          data: "2GB",
+          price: 7,
+          features: [
+            "WhatsApp & social media",
+            "Browsing & email",
+            "Music streaming",
+            "HD video streaming",
+            "Hotspot sharing",
+          ],
+          missing: [],
+          featured: false,
+        },
+        {
+          name: "Standard",
+          tagline: "Work & stream freely",
+          icon: "🚀",
+          iconBg: "rgba(127,119,221,0.12)",
+          data: "5GB",
+          price: 15,
+          features: [
+            "HD video streaming",
+            "Video calls (Zoom, Meet)",
+            "All social media",
+            "Downloads & uploads",
+          ],
+          missing: [],
+          featured: true,
+        },
+        {
+          name: "Premium",
+          tagline: "Heavy users & hotspot",
+          icon: "⚡",
+          iconBg: "rgba(186,117,23,0.1)",
+          data: "10GB",
+          price: 25,
+          features: [
+            "4K streaming",
+            "Unlimited video calls",
+            "Hotspot sharing",
+            "Large file downloads",
+            "Priority bandwidth",
+          ],
+          missing: [],
+          featured: false,
+        },
+      ];
+
+      let isMonthly = false;
+
+      function toggleBilling() {
+        isMonthly = !isMonthly;
+        const t = document.getElementById("billingToggle");
+        t.classList.toggle("on", isMonthly);
+        renderPlans();
+      }
+
+      function renderPlans() {
+        const grid = document.getElementById("plansGrid");
+        grid.innerHTML = plans
+          .map(
+            (p) => `
+    <div class="plan-card ${p.featured ? "featured" : ""}">
+      <div class="plan-icon" style="background: ${p.iconBg}">${p.icon}</div>
+      <div class="plan-name">${p.name}</div>
+      <div class="plan-tagline">${p.tagline}</div>
+      <div class="plan-price">
+        <span class="currency">GHS</span>${p.price}
+      </div>
+      <div class="plan-data">
+        <strong>${p.data}</strong>
+        <span>Data bundle<br><span style="color:var(--teal-400);font-weight:500;">Never expires</span></span>
+      </div>
+      <ul class="plan-features">
+        ${p.features.map((f) => `<li>${f}</li>`).join("")}
+        ${p.missing.map((f) => `<li class="muted">${f}</li>`).join("")}
+      </ul>
+      <button class="plan-btn ${p.featured ? "solid" : "outline"}" onclick="openModal('${p.name}', '${p.data}', ${p.price})">
+        Buy Now — GHS ${p.price}
+      </button>
+    </div>
+  `,
+          )
+          .join("");
+      }
+
+      function toggleFaq(el) {
+        const item = el.parentElement;
+        const wasOpen = item.classList.contains("open");
+        document
+          .querySelectorAll(".faq-item")
+          .forEach((i) => i.classList.remove("open"));
+        if (!wasOpen) item.classList.add("open");
+      }
+
+      /* ── MODAL ── */
+      function openModal(name, dataSize, price) {
+        document.getElementById("modalPlanName").textContent = name;
+        document.getElementById("modalPlanData").textContent = dataSize;
+        document.getElementById("modalPlanPrice").textContent = price;
+        document.getElementById("modalPhone").value = "";
+        document.getElementById("modalError").textContent = "";
+        document.getElementById("payModal").classList.add("open");
+        setTimeout(() => document.getElementById("modalPhone").focus(), 100);
+      }
+
+      function closeModal() {
+        document.getElementById("payModal").classList.remove("open");
+      }
+
+      function submitPayment() {
+        const phone = document.getElementById("modalPhone").value.trim();
+        const err = document.getElementById("modalError");
+        if (!phone) {
+          err.textContent = "Please enter a phone number.";
+          return;
+        }
+        if (!/^0[2357]\d{8}$/.test(phone)) {
+          err.textContent =
+            "Enter a valid Ghana phone number (e.g. 0241234567).";
+          return;
+        }
+        err.textContent = "";
+        const plan = document.getElementById("modalPlanName").textContent;
+        const price = document.getElementById("modalPlanPrice").textContent;
+        closeModal();
+        showSuccess(plan, phone, price);
+      }
+
+      function showSuccess(plan, phone, price) {
+        document.getElementById("successPhone").textContent = phone;
+        document.getElementById("successPlan").textContent = plan;
+        document.getElementById("successPrice").textContent = price;
+        document.getElementById("successModal").classList.add("open");
+      }
+
+      function closeSuccess() {
+        document.getElementById("successModal").classList.remove("open");
+      }
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          closeModal();
+          closeSuccess();
+        }
+      });
+      function payWithPaystack() {
+        const phone = document.getElementById("modalPhone").value.trim();
+        const err = document.getElementById("modalError");
+        if (!phone) {
+          err.textContent = "Please enter a phone number.";
+          return;
+        }
+        if (!/^0[2357]\d{8}$/.test(phone)) {
+          err.textContent =
+            "Enter a valid Ghana phone number (e.g. 0241234567).";
+          return;
+        }
+        err.textContent = "";
+        const popup = new PaystackPop();
+
+        popup.newTransaction({
+          // Replace this with your actual Paystack Public Key from your dashboard
+          key: "pk_live_92a6fb3739637d334332b8e384529bcca58d2d35",
+
+          // Hardcoded placeholder to bypass input collections entirely
+          email: "anonymous_buyer@yourdomain.com",
+
+          // Amount must be in the lowest currency subunit (Pesewas for GHS).
+          // GHS 25 = 2500 pesewas
+          amount:
+            parseInt(document.getElementById("modalPlanPrice").textContent) *
+            100,
+
+          currency: "GHS",
+
+          // Optional: You can still label the transaction reference inside your dashboard metadata
+          metadata: {
+            custom_fields: [
+              {
+                display_name: "Product Type",
+                variable_name: "product_type",
+                value: "DataFlow",
+              },
+            ],
+          },
+
+          // What happens if the payment succeeds
+          onSuccess: function (response) {
+            alert(
+              "Payment successful! Transaction Reference: " +
+                response.reference,
+            );
+            // Execute your delivery logic here (e.g., redirect to success page or trigger a webhook)
+          },
+
+          // What happens if the customer closes the popup overlay manually
+          onCancel: function () {
+            alert("Transaction cancelled. The popup was closed.");
+          },
+        });
+      }
+
+      renderPlans();
+    </script>
+
+    <!-- Pay Modal -->
+    <div
+      id="payModal"
+      class="modal-overlay"
+      onclick="if (event.target === this) closeModal();"
+    >
+      <div class="modal-box">
+        <button class="modal-close" onclick="closeModal()">✕</button>
+        <div class="modal-icon">📲</div>
+        <h2 class="modal-title">Complete Your Purchase</h2>
+        <div class="modal-plan-summary">
+          <span class="modal-plan-badge"
+            ><span id="modalPlanData"></span> · <span id="modalPlanName"></span
+          ></span>
+          <span class="modal-plan-price"
+            >GHS <span id="modalPlanPrice"></span
+          ></span>
+        </div>
+        <p class="modal-label">Receiver's Phone Number</p>
+        <input
+          id="modalPhone"
+          type="tel"
+          class="modal-input"
+          placeholder="e.g. 0241234567"
+          maxlength="10"
+        />
+        <p class="modal-hint">
+          Enter the number that will receive the data bundle.
+        </p>
+        <p id="modalError" class="modal-error"></p>
+
+        <button class="modal-pay-btn" onclick="payWithPaystack()">
+          Pay with Mobile Money →
+        </button>
+        <div class="modal-methods">
+          <span>MTN MoMo</span><span>Vodafone Cash</span><span>AirtelTigo</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div
+      id="successModal"
+      class="modal-overlay"
+      onclick="if (event.target === this) closeSuccess();"
+    >
+      <div class="modal-box" style="text-align: center">
+        <div style="font-size: 3rem; margin-bottom: 1rem">✅</div>
+        <h2 class="modal-title">Payment Successful!</h2>
+        <p
+          style="
+            color: #9fe1cb;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin: 0.75rem 0 1.5rem;
+          "
+        >
+          The <strong id="successPlan"></strong> bundle (GHS
+          <span id="successPrice"></span>) has been sent to
+          <strong id="successPhone"></strong>. They'll receive an SMS
+          confirmation shortly.
+        </p>
+        <button class="modal-pay-btn" onclick="closeSuccess()">Done</button>
+      </div>
+    </div>
+  </body>
+</html>
